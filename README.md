@@ -90,7 +90,7 @@ Locale = la "cultura" que entiende la computadora (idioma + formato + caracteres
 
 El código configura el sistema para usar inglés de EE.UU. con caracteres universales (UTF-8), evitando errores en programas que necesitan mostrar texto con tildes o emojis.
 
-Setup Sources
+Setup Sources
 
 You will need to add the ROS 2 apt repository to your system.
 
