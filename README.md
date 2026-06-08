@@ -86,6 +86,6 @@ Si intentas usar UTF-8 sin configurarlo bien, verás errores como:
 
 Resumen 
 
-Locale = la "cultura" que entiende tu computadora (idioma + formato + caracteres).
+Locale = la "cultura" que entiende la computadora (idioma + formato + caracteres).
 
 El código configura el sistema para usar inglés de EE.UU. con caracteres universales (UTF-8), evitando errores en programas que necesitan mostrar texto con tildes o emojis.
