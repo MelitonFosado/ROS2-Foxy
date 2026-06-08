@@ -12,8 +12,6 @@ export LANG=en_US.UTF-8
 
 locale  # verify settings
 
-Te lo explico paso a paso, como si fuera la primera vez que escuchas sobre esto.
-
 ¿Qué es un locale?
 
 Imagina que tu computadora es una persona que puede hablar muchos idiomas y seguir distintas costumbres del mundo. 
