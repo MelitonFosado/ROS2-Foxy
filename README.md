@@ -107,3 +107,81 @@ sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o
 Then add the repository to your sources list.
 
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+¿Qué es un APT repository?
+
+Imagina que APT (Advanced Package Tool) es como una tienda de apps para Ubuntu/Debian. Un repository (repositorio) es el catálogo de esa tienda.
+
+· Sin repositorios → solo tienes lo que ya vino instalado
+· Con repositorios → puedes descargar e instalar cualquier programa desde Internet
+
+Ejemplo: cuando haces sudo apt install python3, APT busca en sus repositorios configurados, descarga Python y lo instala automáticamente.
+
+¿Qué hace el código que me diste?
+
+Este código agrega el repositorio oficial de ROS 2 a tu sistema, para que puedas instalarlo como cualquier otro programa.
+
+Paso 1: Habilitar "Universe" repository
+
+```bash
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+```
+
+· universe = repositorio comunitario con miles de programas de código abierto
+· software-properties-common = herramienta para manejar repositorios fácilmente
+
+Paso 2: Agregar la llave GPG de ROS 2
+
+```bash
+sudo apt update && sudo apt install curl -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+```
+
+¿Qué es una llave GPG? Es como un sello de autenticidad. Garantiza que los archivos vienen realmente de ROS 2 y no de un hacker.
+
+Sin la llave, APT rechazaría instalar paquetes de ROS por seguridad.
+
+Paso 3: Agregar el repositorio a tu lista de fuentes
+
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+```
+
+Traducción:
+
+· deb = repositorio de paquetes binarios
+· arch=... = solo para tu arquitectura (amd64, arm64, etc.)
+· signed-by=... = usa esta llave GPG para verificar
+· http://... = dónde están los paquetes (los servidores de ROS)
+· $(lsb_release -cs) = tu versión de Ubuntu (ej: focal para 20.04, jammy para 22.04)
+· /etc/apt/sources.list.d/ros2.list = archivo donde se guarda esta configuración
+
+Paso 4: Actualizar e instalar ROS 2
+
+```bash
+sudo apt update
+sudo apt install ros-humble-desktop
+```
+
+· sudo apt update = refresca el catálogo (ahora incluye ROS 2)
+· sudo apt install ros-humble-desktop = instala ROS 2 completo
+
+Analogía simple
+
+Concepto Analogía
+APT El instalador de apps de Ubuntu
+Repository Una tienda de apps (como Google Play)
+GPG key El certificado de seguridad de la tienda
+sources.list Tu lista de tiendas favoritas
+sudo apt update Refrescar qué apps están disponibles
+sudo apt install Descargar e instalar una app
+
+¿Por qué no instalas ROS 2 con sudo apt install ros-humble-desktop directamente?
+
+Porque ROS 2 no está en los repositorios oficiales de Ubuntu. Primero debes agregar su repositorio, igual que agregarías la tienda de Samsung en tu teléfono si no viene preinstalada.
+
+Resumen
+
+El código configura una nueva tienda de apps (el repositorio de ROS 2) con su certificado de seguridad (llave GPG), para que puedas instalar ROS 2 como si fuera un programa normal de Ubuntu. Sin esto, APT no sabría dónde encontrar ROS 2.
+
