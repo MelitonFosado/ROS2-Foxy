@@ -185,11 +185,15 @@ Resumen
 
 El código configura una nueva tienda de apps (el repositorio de ROS 2) con su certificado de seguridad (llave GPG), para que puedas instalar ROS 2 como si fuera un programa normal de Ubuntu. Sin esto, APT no sabría dónde encontrar ROS 2.
 
+Environment setup
 
+Sourcing the setup script
 
+Set up your environment by sourcing the following file.
 
-
-
+# Replace ".bash" with your shell if you're not using bash
+# Possible values are: setup.bash, setup.sh, setup.zsh
+source /opt/ros/foxy/setup.bash
 
 ¿Qué es "sourcing" un archivo?
 
