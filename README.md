@@ -117,7 +117,7 @@ Imagina que APT (Advanced Package Tool) es como una tienda de apps para Ubuntu/D
 
 Ejemplo: cuando haces sudo apt install python3, APT busca en sus repositorios configurados, descarga Python y lo instala automáticamente.
 
-¿Qué hace el código que me diste?
+¿Qué hace el código?
 
 Este código agrega el repositorio oficial de ROS 2 a tu sistema, para que puedas instalarlo como cualquier otro programa.
 
