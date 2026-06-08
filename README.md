@@ -185,3 +185,100 @@ Resumen
 
 El código configura una nueva tienda de apps (el repositorio de ROS 2) con su certificado de seguridad (llave GPG), para que puedas instalar ROS 2 como si fuera un programa normal de Ubuntu. Sin esto, APT no sabría dónde encontrar ROS 2.
 
+
+
+
+
+
+
+¿Qué es "sourcing" un archivo?
+
+Source (o ejecutar con .) significa leer y ejecutar comandos como si los escribieras tú mismo en la terminal.
+
+Diferencia clave:
+
+· bash script.sh → ejecuta el script en un subproceso (las variables mueren al terminar)
+· source script.sh → ejecuta en la misma terminal (las variables se quedan)
+
+¿Qué hay dentro de /opt/ros/foxy/setup.bash?
+
+Ese archivo contiene comandos que configuran tu entorno para usar ROS 2 Foxy. Básicamente hace esto:
+
+1. Agrega ROS 2 al PATH
+
+```bash
+export PATH="/opt/ros/foxy/bin:$PATH"
+```
+
+Para que cuando escribas ros2 run ..., la terminal sepa dónde encontrar ese comando.
+
+2. Agrega librerías de ROS
+
+```bash
+export LD_LIBRARY_PATH="/opt/ros/foxy/lib:$LD_LIBRARY_PATH"
+```
+
+Para que los programas encuentren las librerías necesarias (como .so files).
+
+3. Configura variables de Python
+
+```bash
+export PYTHONPATH="/opt/ros/foxy/lib/python3.8/site-packages:$PYTHONPATH"
+```
+
+Para que Python pueda importar módulos de ROS.
+
+4. Configura atajos y autocompletado
+
+```bash
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+```
+
+Para que el tabulador autocomplete comandos de ROS.
+
+¿Qué pasa si NO haces el source?
+
+Sin ejecutar ese comando, intentar usar ROS 2 daría errores:
+
+```bash
+$ ros2 run turtlesim turtlesim_node
+bash: ros2: command not found
+```
+
+Tu terminal simplemente no sabe dónde está el comando ros2.
+
+Analogía simple
+
+Imagina que ROS 2 es como una caja de herramientas guardada en /opt/ros/foxy/:
+
+· Sin source → La caja está ahí, pero no tienes las herramientas en tu cinturón. Cada vez que quieras un martillo, tendrías que ir a la caja y sacarlo manualmente.
+· Con source → Las herramientas aparecen mágicamente en tu cinturón. Puedes usar ros2 run como si fuera cualquier comando del sistema.
+
+¿Por qué va al final de .bashrc?
+
+Mucha gente agrega esta línea al archivo ~/.bashrc (que se ejecuta automáticamente al abrir cada terminal):
+
+```bash
+echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+```
+
+Así siempre tienes ROS disponible sin tener que escribir ese comando manualmente cada vez.
+
+Comandos equivalentes según tu shell
+
+El código original menciona diferentes archivos:
+
+Shell Archivo a source
+Bash setup.bash
+Zsh setup.zsh
+Fish setup.fish
+Sh setup.sh
+
+Solo necesitas el que corresponde a tu shell. El más común es setup.bash.
+
+Resumen
+
+Source = activar ROS 2 en tu terminal actual. Es como "encender" ROS para que la terminal sepa todos sus comandos y rutas. Sin esto, ROS 2 está instalado pero no lo puedes usar.
+
+Si cierras la terminal y abres una nueva, tienes que hacer source otra vez (a menos que lo pongas en .bashrc).
+
