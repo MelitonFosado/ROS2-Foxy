@@ -1,5 +1,7 @@
 # ROS2-Foxy
 
+ubuntu-20.04.6-desktop-amd64
+
 locale  # check for UTF-8
 
 sudo apt update && sudo apt install locales
