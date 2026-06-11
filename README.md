@@ -288,3 +288,56 @@ Source = activar ROS 2 en tu terminal actual. Es como "encender" ROS para que la
 
 Si cierras la terminal y abres una nueva, tienes que hacer source otra vez (a menos que lo pongas en .bashrc).
 
+## Registrar el repositorio de ROS2 en APT
+
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+```
+
+Este comando tiene una sola misión: decirle a APT (el gestor de paquetes de Ubuntu) dónde descargar ROS2. Se ejecuta en tres etapas:
+
+**① Subcomandos dinámicos** — antes de que `echo` haga cualquier cosa, el shell evalúa dos expresiones:
+- `$(dpkg --print-architecture)` detecta si tu máquina es `amd64`, `arm64`, etc.
+- `$(. /etc/os-release && echo $UBUNTU_CODENAME)` lee tu versión de Ubuntu (ej. `jammy`, `focal`) para saber qué paquetes son compatibles.
+
+**② `echo`** toma esos valores y construye una línea con el formato exacto que APT espera para un repositorio externo, incluyendo la ruta a la clave GPG que verifica que los paquetes son legítimos.
+
+**③ `sudo tee`** — el símbolo `|` manda esa línea como entrada a `tee`, que necesita `sudo` porque el archivo `/etc/apt/sources.list.d/` pertenece a root. `tee` normalmente también imprime en pantalla, pero `> /dev/null` descarta eso para que la salida quede limpia.
+
+**Resultado:** se crea el archivo `ros2.list` con la dirección del repositorio, y la próxima vez que hagas `apt update`, Ubuntu ya sabe dónde buscar los paquetes de ROS2.
+
+### Flujo del comando
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│           ① Subcomandos evaluados primero                       │
+│                                                                 │
+│  ┌──────────────────────┐  ┌─────────────────────┐             │
+│  │ dpkg                 │  │ /etc/os-release      │             │
+│  │ --print-architecture │  │ $UBUNTU_CODENAME     │             │
+│  │   → ej: amd64        │  │   → ej: jammy        │             │
+│  └──────────┬───────────┘  └──────────┬──────────┘             │
+│             └──────────┬──────────────┘                         │
+└────────────────────────┼────────────────────────────────────────┘
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  ② echo construye la línea completa                             │
+│                                                                 │
+│  "deb [arch=amd64 signed-by=/usr/share/keyrings/...]           │
+│   http://packages.ros.org/ros2/ubuntu jammy main"              │
+└────────────────────────┬────────────────────────────────────────┘
+                         │  pipe  |
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  ③ sudo tee  →  escribe con permisos de root                    │
+│                                                                 │
+│          ┌──────────────────────┐                               │
+│          │ /etc/apt/sources.    │   stdout → /dev/null          │
+│          │ list.d/ros2.list ✓   │   (descartado, sin ruido)     │
+│          └──────────────────────┘                               │
+└─────────────────────────────────────────────────────────────────┘
+
+APT ahora conoce el repositorio de ROS2 → apt update lo encuentra
+```
+
+> **Nota:** La clave GPG (`ros-archive-keyring.gpg`) debe estar instalada previamente con `curl` para que APT pueda verificar la autenticidad de los paquetes.
